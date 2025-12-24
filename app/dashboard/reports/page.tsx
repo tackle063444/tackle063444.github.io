@@ -16,55 +16,58 @@ import {
   Cell 
 } from 'recharts';
 import { Download, Calendar } from "lucide-react";
+import { useLanguage } from "@/data/language-context"
 
 // Mock Data
 const data = [
-  { name: 'จ.', revenue: 4000, profit: 2400 },
-  { name: 'อ.', revenue: 3000, profit: 1398 },
-  { name: 'พ.', revenue: 2000, profit: 9800 },
-  { name: 'พฤ.', revenue: 2780, profit: 3908 },
-  { name: 'ศ.', revenue: 1890, profit: 4800 },
-  { name: 'ส.', revenue: 2390, profit: 3800 },
-  { name: 'อา.', revenue: 3490, profit: 4300 },
+  { name: 'Mo', revenue: 4000, profit: 2400 },
+  { name: 'Tu', revenue: 3000, profit: 1398 },
+  { name: 'We', revenue: 2000, profit: 9800 },
+  { name: 'Th', revenue: 2780, profit: 3908 },
+  { name: 'Fr', revenue: 1890, profit: 4800 },
+  { name: 'Sa', revenue: 2390, profit: 3800 },
+  { name: 'Su', revenue: 3490, profit: 4300 },
 ];
 
 const categoryData = [
-  { name: 'อิเล็กทรอนิกส์', value: 400 },
-  { name: 'เฟอร์นิเจอร์', value: 300 },
-  { name: 'อุปกรณ์เสริม', value: 300 },
-  { name: 'เสื้อผ้า', value: 200 },
+  { name: 'Electronics', value: 400 },
+  { name: 'Furniture', value: 300 },
+  { name: 'Accessories', value: 300 },
+  { name: 'Clothing', value: 200 },
 ];
 
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
 
 export default function ReportsPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-10">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">รายงานและสถิติ (Reports & Analytics)</h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t.reports}</h2>
           <p className="text-muted-foreground">
-            วิเคราะห์ผลประกอบการและดูข้อมูลเชิงลึก
+            Analyze performance and insights.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline">
+          <Button variant="outline" className="bg-background/50">
             <Calendar className="mr-2 h-4 w-4" />
-            20 ม.ค. 2024 - 09 ก.พ. 2024
+            Jan 20, 2024 - Feb 09, 2024
           </Button>
-          <Button className="bg-indigo-600 hover:bg-indigo-700">
+          <Button className="bg-primary hover:bg-primary/90">
             <Download className="mr-2 h-4 w-4" />
-            ดาวน์โหลด PDF
+            Download PDF
           </Button>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 border-slate-200/60 dark:border-slate-800 shadow-sm">
+        <Card className="col-span-4 border-border bg-card/50 shadow-sm backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>รายได้ vs กำไร (Revenue vs Profit)</CardTitle>
+            <CardTitle>Revenue vs Profit</CardTitle>
             <CardDescription>
-              เปรียบเทียบรายได้และกำไรรายวัน
+              Daily comparison.
             </CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
@@ -79,7 +82,7 @@ export default function ReportsPage() {
                     bottom: 5,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                   <XAxis 
                     dataKey="name" 
                     stroke="#888888" 
@@ -96,22 +99,27 @@ export default function ReportsPage() {
                   />
                   <Tooltip 
                     cursor={{ fill: 'transparent' }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    contentStyle={{ 
+                      borderRadius: '8px', 
+                      border: '1px solid hsl(var(--border))', 
+                      background: 'hsl(var(--card))',
+                      color: 'hsl(var(--foreground))'
+                    }}
                   />
                   <Legend />
-                  <Bar dataKey="revenue" fill="#6366f1" radius={[4, 4, 0, 0]} name="รายได้" />
-                  <Bar dataKey="profit" fill="#10b981" radius={[4, 4, 0, 0]} name="กำไร" />
+                  <Bar dataKey="revenue" fill="#6366f1" radius={[4, 4, 0, 0]} name="Revenue" />
+                  <Bar dataKey="profit" fill="#10b981" radius={[4, 4, 0, 0]} name="Profit" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="col-span-3 border-slate-200/60 dark:border-slate-800 shadow-sm">
+        <Card className="col-span-3 border-border bg-card/50 shadow-sm backdrop-blur-sm">
            <CardHeader>
-            <CardTitle>ยอดขายตามหมวดหมู่ (By Category)</CardTitle>
+            <CardTitle>Sales by Category</CardTitle>
             <CardDescription>
-              สัดส่วนยอดขายแบ่งตามประเภทสินค้า
+              Sales distribution.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -138,7 +146,7 @@ export default function ReportsPage() {
                 {/* Center text for Donut chart */}
                 <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                    <span className="text-2xl font-bold">1,200</span>
-                   <span className="text-xs text-muted-foreground">ยอดรวม</span>
+                   <span className="text-xs text-muted-foreground">{t.total}</span>
                 </div>
             </div>
           </CardContent>
@@ -146,20 +154,20 @@ export default function ReportsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-         <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm">
+         <Card className="border-border bg-card/50 shadow-sm backdrop-blur-sm">
            <CardHeader>
-             <CardTitle className="text-lg">สินค้าขายดี (Top Selling)</CardTitle>
+             <CardTitle className="text-lg">Top Selling</CardTitle>
            </CardHeader>
            <CardContent className="space-y-4">
              {[1,2,3,4,5].map((i) => (
                <div key={i} className="flex items-center justify-between">
                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-xs font-bold text-indigo-600">
+                    <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                       #{i}
                     </div>
                     <div>
-                      <p className="text-sm font-medium">ชื่อสินค้า {i}</p>
-                      <p className="text-xs text-muted-foreground">หมวดหมู่ A</p>
+                      <p className="text-sm font-medium">Product {i}</p>
+                      <p className="text-xs text-muted-foreground">Category A</p>
                     </div>
                  </div>
                  <div className="text-sm font-bold">฿12,450</div>
@@ -168,20 +176,20 @@ export default function ReportsPage() {
            </CardContent>
          </Card>
 
-         <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm">
+         <Card className="border-border bg-card/50 shadow-sm backdrop-blur-sm">
            <CardHeader>
-             <CardTitle className="text-lg">สาขายอดนิยม (Top Branch)</CardTitle>
+             <CardTitle className="text-lg">Top Branch</CardTitle>
            </CardHeader>
            <CardContent className="space-y-4">
              {[1,2,3].map((i) => (
                <div key={i} className="flex items-center justify-between">
                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-xs font-bold text-emerald-600">
+                    <div className="h-8 w-8 rounded bg-emerald-500/10 flex items-center justify-center text-xs font-bold text-emerald-600">
                       #{i}
                     </div>
                     <div>
-                      <p className="text-sm font-medium">สาขา {i}</p>
-                      <p className="text-xs text-muted-foreground">กรุงเทพฯ</p>
+                      <p className="text-sm font-medium">Branch {i}</p>
+                      <p className="text-xs text-muted-foreground">Bangkok</p>
                     </div>
                  </div>
                  <div className="text-sm font-bold">฿85,200</div>
@@ -190,17 +198,17 @@ export default function ReportsPage() {
            </CardContent>
          </Card>
 
-         <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm">
+         <Card className="border-border bg-card/50 shadow-sm backdrop-blur-sm">
            <CardHeader>
-             <CardTitle className="text-lg">การแจ้งเตือน (Alerts)</CardTitle>
+             <CardTitle className="text-lg">Alerts</CardTitle>
            </CardHeader>
            <CardContent className="space-y-4">
              {[1,2,3,4].map((i) => (
                <div key={i} className="flex items-start gap-3">
-                  <div className={`mt-0.5 h-2 w-2 rounded-full ${i%2===0 ? 'bg-red-500' : 'bg-yellow-500'}`} />
+                  <div className={`mt-0.5 h-2 w-2 rounded-full ${i%2===0 ? 'bg-destructive' : 'bg-yellow-500'}`} />
                   <div>
-                    <p className="text-sm font-medium">{i%2===0 ? 'สต๊อกสินค้าหมด' : 'สินค้าใกล้หมดสต๊อก'}</p>
-                    <p className="text-xs text-muted-foreground">สินค้า ID-00{i} ต่ำกว่าเกณฑ์</p>
+                    <p className="text-sm font-medium">{i%2===0 ? t.outOfStock : t.lowStockAlert}</p>
+                    <p className="text-xs text-muted-foreground">Item ID-00{i} below threshold</p>
                   </div>
                </div>
              ))}
