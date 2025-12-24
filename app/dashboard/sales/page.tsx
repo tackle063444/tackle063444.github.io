@@ -1,137 +1,137 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
+import { Search, ScanBarcode, Minus, Plus, Trash2, CreditCard, Banknote, QrCode } from "lucide-react"
+import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { 
-  Search, 
-  ShoppingCart,
-  Plus,
-  Minus,
-  Trash2,
-  ScanBarcode,
-  CreditCard
-} from "lucide-react"
 
-// Mock Products
-const posProducts = [
-  { id: "PROD-001", name: "Wireless Mouse", price: 1290, color: "bg-blue-500" },
-  { id: "PROD-002", name: "Keyboard RGB", price: 3500, color: "bg-purple-500" },
-  { id: "PROD-003", name: "Headset 7.1", price: 1590, color: "bg-emerald-500" },
-  { id: "PROD-004", name: "Monitor 24\"", price: 4500, color: "bg-orange-500" },
-  { id: "PROD-005", name: "USB-C Hub", price: 890, color: "bg-slate-500" },
-  { id: "PROD-006", name: "Desk Mat", price: 590, color: "bg-indigo-500" },
+const products = [
+  { id: 1, name: "เมาส์ไร้สาย", price: 1290, image: "🖱️" },
+  { id: 2, name: "คีย์บอร์ด RGB", price: 3500, image: "⌨️" },
+  { id: 3, name: "หูฟัง Bluetooth", price: 1590, image: "🎧" },
+  { id: 4, name: "จอ 24 นิ้ว", price: 5900, image: "🖥️" },
+  { id: 5, name: "USB Hub", price: 890, image: "🔌" },
+  { id: 6, name: "แผ่นรองเมาส์", price: 290, image: "⬛" },
+  { id: 7, name: "ขาตั้งจอ", price: 1200, image: "🏗️" },
+  { id: 8, name: "กล้อง Webcam", price: 2500, image: "📷" },
 ]
 
 export default function SalesPage() {
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] gap-6 md:flex-row animate-in fade-in duration-500">
+    <div className="flex h-[calc(100vh-8rem)] flex-col gap-6 md:flex-row animate-in fade-in duration-500">
       
-      {/* Left: Product Grid */}
-      <div className="flex-1 flex flex-col space-y-4 overflow-hidden">
-        <div className="flex items-center justify-between">
-           <div className="relative w-full max-w-sm">
-             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-             <Input 
-               placeholder="Search product..." 
-               className="pl-8 bg-white dark:bg-slate-900"
-             />
-           </div>
-           <Button variant="outline" size="icon">
+      {/* Product List Section */}
+      <div className="flex flex-1 flex-col gap-4 overflow-hidden rounded-xl border bg-white dark:bg-slate-900 shadow-sm">
+        <div className="flex items-center gap-2 p-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="ค้นหาสินค้า..." 
+              className="pl-8 bg-white dark:bg-slate-950"
+            />
+          </div>
+          <Button variant="outline" size="icon">
              <ScanBarcode className="h-4 w-4" />
-           </Button>
+          </Button>
+          <Button variant="outline">หมวดหมู่</Button>
         </div>
-
-        <div className="flex-1 overflow-y-auto pr-2">
-           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-              {posProducts.map((p) => (
-                <Card key={p.id} className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-md border-slate-200/60 dark:border-slate-800">
-                  <div className={`h-32 w-full ${p.color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center rounded-t-lg`}>
-                     <div className={`h-16 w-16 rounded-full ${p.color} flex items-center justify-center text-white/90 font-bold shadow-lg`}>
-                        {p.name.charAt(0)}
-                     </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold truncate">{p.name}</h3>
-                    <p className="text-sm text-indigo-600 font-bold dark:text-indigo-400">
-                      ฿{p.price.toLocaleString()}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
+        
+        <div className="flex-1 overflow-y-auto p-4">
+           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+             {products.map((product) => (
+               <div 
+                key={product.id} 
+                className="group relative flex cursor-pointer flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md hover:border-primary/50"
+               >
+                 <div className="aspect-square flex items-center justify-center text-4xl bg-slate-50 dark:bg-slate-800">
+                   {product.image}
+                 </div>
+                 <div className="p-3">
+                   <h3 className="font-semibold truncate text-sm">{product.name}</h3>
+                   <div className="mt-1 flex items-center justify-between">
+                     <span className="font-bold text-indigo-600 dark:text-indigo-400">฿{product.price.toLocaleString()}</span>
+                     <Badge variant="secondary" className="text-[10px] h-5 px-1.5">สต๊อก 12</Badge>
+                   </div>
+                 </div>
+               </div>
+             ))}
            </div>
         </div>
       </div>
 
-      {/* Right: Cart */}
-      <Card className="w-full md:w-96 flex flex-col h-full border-slate-200/60 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none">
-        <CardHeader className="border-b pb-4">
-          <CardTitle className="flex items-center gap-2">
-             <ShoppingCart className="h-5 w-5 text-primary" /> Current Order
-          </CardTitle>
-          <CardDescription>Order #1024 - Walk-in Customer</CardDescription>
-        </CardHeader>
-        
-        <CardContent className="flex-1 overflow-y-auto py-4 space-y-4">
-          {/* Cart Item 1 */}
-          <div className="flex items-center justify-between space-x-4">
-             <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium leading-none">Wireless Mouse</p>
-                <p className="text-xs text-muted-foreground">฿1,290 / unit</p>
+      {/* Cart Section */}
+      <div className="flex w-full flex-col rounded-xl border bg-white dark:bg-slate-900 shadow-sm md:w-[400px]">
+        <div className="flex items-center justify-between border-b p-4 bg-slate-50/50 dark:bg-slate-900/50">
+          <h2 className="font-semibold">ตะกร้าสินค้า (Order)</h2>
+          <Button variant="ghost" size="sm" className="h-8 text-red-500 hover:text-red-600 hover:bg-red-50">
+            ล้างตะกร้า
+            <Trash2 className="ml-2 h-3 w-3" />
+          </Button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+           {/* Cart Item Mock */}
+           {[1, 2].map((i) => (
+             <div key={i} className="flex items-start gap-3">
+                <div className="h-12 w-12 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg">
+                  {i === 1 ? '🖱️' : '⌨️'}
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium">{i === 1 ? 'เมาส์ไร้สาย' : 'คีย์บอร์ด RGB'}</p>
+                  <p className="text-sm text-indigo-600 font-bold">฿{i === 1 ? '1,290' : '3,500'}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                   <Button variant="outline" size="icon" className="h-7 w-7 rounded-full">
+                     <Minus className="h-3 w-3" />
+                   </Button>
+                   <span className="text-sm w-4 text-center">1</span>
+                   <Button variant="outline" size="icon" className="h-7 w-7 rounded-full">
+                     <Plus className="h-3 w-3" />
+                   </Button>
+                </div>
              </div>
-             <div className="flex items-center space-x-2">
-                <Button variant="outline" size="icon" className="h-6 w-6 rounded-full"><Minus className="h-3 w-3" /></Button>
-                <span className="text-sm font-bold w-4 text-center">2</span>
-                <Button variant="outline" size="icon" className="h-6 w-6 rounded-full"><Plus className="h-3 w-3" /></Button>
-             </div>
-             <div className="w-16 text-right font-medium text-sm">
-                ฿2,580
-             </div>
+           ))}
+        </div>
+
+        <div className="border-t bg-slate-50 p-6 dark:bg-slate-900/50 space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">ยอดรวม (Subtotal)</span>
+              <span>฿4,790.00</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">ภาษี (Tax 7%)</span>
+              <span>฿335.30</span>
+            </div>
+            <Separator className="my-2" />
+            <div className="flex justify-between text-lg font-bold">
+              <span>ยอดสุทธิ (Total)</span>
+              <span className="text-indigo-600">฿5,125.30</span>
+            </div>
           </div>
           
-           {/* Cart Item 2 */}
-           <div className="flex items-center justify-between space-x-4">
-             <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium leading-none">Keyboard RGB</p>
-                <p className="text-xs text-muted-foreground">฿3,500 / unit</p>
-             </div>
-             <div className="flex items-center space-x-2">
-                <Button variant="outline" size="icon" className="h-6 w-6 rounded-full"><Minus className="h-3 w-3" /></Button>
-                <span className="text-sm font-bold w-4 text-center">1</span>
-                <Button variant="outline" size="icon" className="h-6 w-6 rounded-full"><Plus className="h-3 w-3" /></Button>
-             </div>
-             <div className="w-16 text-right font-medium text-sm">
-                ฿3,500
-             </div>
-          </div>
-        </CardContent>
-
-        <CardFooter className="flex flex-col border-t pt-4 gap-4 bg-slate-50 dark:bg-slate-900/50 rounded-b-lg">
-           <div className="w-full space-y-2">
-             <div className="flex justify-between text-sm">
-               <span className="text-muted-foreground">Subtotal</span>
-               <span>฿6,080.00</span>
-             </div>
-             <div className="flex justify-between text-sm">
-               <span className="text-muted-foreground">Tax (7%)</span>
-               <span>฿425.60</span>
-             </div>
-             <div className="flex justify-between font-bold text-lg pt-2 border-t border-dashed">
-               <span>Total</span>
-               <span className="text-primary">฿6,505.60</span>
-             </div>
+           <div className="grid grid-cols-3 gap-2 py-2">
+             <Button variant="outline" className="flex flex-col h-16 items-center justify-center gap-1 border-primary/20 bg-primary/5 hover:bg-primary/10">
+               <Banknote className="h-5 w-5" />
+               <span className="text-[10px]">เงินสด</span>
+             </Button>
+             <Button variant="outline" className="flex flex-col h-16 items-center justify-center gap-1">
+               <QrCode className="h-5 w-5" />
+               <span className="text-[10px]">QR Code</span>
+             </Button>
+             <Button variant="outline" className="flex flex-col h-16 items-center justify-center gap-1">
+               <CreditCard className="h-5 w-5" />
+               <span className="text-[10px]">บัตรเครดิต</span>
+             </Button>
            </div>
-           
-           <div className="grid grid-cols-2 gap-2 w-full">
-              <Button variant="outline" className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10">
-                 <Trash2 className="h-4 w-4 mr-2" /> Clear
-              </Button>
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
-                 <CreditCard className="h-4 w-4 mr-2" /> Pay
-              </Button>
-           </div>
-        </CardFooter>
-      </Card>
 
+          <Button className="w-full h-12 text-lg font-bold shadow-md bg-indigo-600 hover:bg-indigo-700">
+            รับชำระเงิน (Pay)
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { 
@@ -13,16 +15,16 @@ import {
   Filter, 
   ArrowUpDown,
   History,
-  PackagePlus // for Restock
+  PackagePlus
 } from "lucide-react"
 
 // Mock data
 const inventory = [
-  { id: "PROD-0001", name: "Premium Wireless Mouse", branch: "Main Branch (HQ)", stock: 45, reorderPoint: 50, status: "Low Stock" },
-  { id: "PROD-0001", name: "Premium Wireless Mouse", branch: "Downtown Branch", stock: 120, reorderPoint: 50, status: "Good" },
-  { id: "PROD-0002", name: "Mechanical Keyboard RGB", branch: "Main Branch (HQ)", stock: 12, reorderPoint: 20, status: "Low Stock" },
-  { id: "PROD-0003", name: "Ergonomic Office Chair", branch: "Main Branch (HQ)", stock: 4, reorderPoint: 5, status: "Critical" },
-  { id: "PROD-0006", name: "27\" 4K Monitor", branch: "Mall Branch", stock: 8, reorderPoint: 10, status: "Low Stock" },
+  { id: "PROD-0001", name: "เมาส์ไร้สายพรีเมียม (Premium Wireless Mouse)", branch: "สำนักงานใหญ่ (HQ)", stock: 45, reorderPoint: 50, status: "สินค้าใกล้หมด" },
+  { id: "PROD-0001", name: "เมาส์ไร้สายพรีเมียม (Premium Wireless Mouse)", branch: "สาขาสยาม", stock: 120, reorderPoint: 50, status: "ปกติ" },
+  { id: "PROD-0002", name: "คีย์บอร์ด RGB", branch: "สำนักงานใหญ่ (HQ)", stock: 12, reorderPoint: 20, status: "สินค้าใกล้หมด" },
+  { id: "PROD-0003", name: "เก้าอี้ทำงาน", branch: "สำนักงานใหญ่ (HQ)", stock: 4, reorderPoint: 5, status: "วิกฤต" },
+  { id: "PROD-0006", name: "จอ 27 นิ้ว 4K", branch: "สาขาเซ็นทรัล", stock: 8, reorderPoint: 10, status: "สินค้าใกล้หมด" },
 ]
 
 export default function InventoryPage() {
@@ -30,19 +32,19 @@ export default function InventoryPage() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Inventory Management</h2>
+          <h2 className="text-2xl font-bold tracking-tight">จัดการสต๊อก (Inventory)</h2>
           <p className="text-muted-foreground">
-            Monitor stock levels across all branches and manage restocks.
+            ตรวจสอบจำนวนสินค้าคงเหลือในแต่ละสาขา และจัดการการเติมสินค้า
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
             <History className="mr-2 h-4 w-4" />
-            Stock History
+            ประวัติสต๊อก
           </Button>
           <Button className="bg-indigo-600 hover:bg-indigo-700">
             <PackagePlus className="mr-2 h-4 w-4" />
-            Restock Items
+            รับสินค้าเข้า (Restock)
           </Button>
         </div>
       </div>
@@ -51,18 +53,18 @@ export default function InventoryPage() {
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search by SKU or Name..." 
+            placeholder="ค้นหาด้วยรหัส หรือ ชื่อสินค้า..." 
             className="pl-8 bg-slate-50 border-slate-200 dark:bg-slate-950 dark:border-slate-800"
           />
         </div>
         <div className="flex items-center gap-2">
            <Button variant="outline" size="sm" className="h-9">
             <Filter className="mr-2 h-4 w-4" />
-            Branch: All
+            สาขา: ทั้งหมด
           </Button>
           <Button variant="outline" size="sm" className="h-9">
             <Filter className="mr-2 h-4 w-4" />
-            Status
+            สถานะ
           </Button>
         </div>
       </div>
@@ -71,17 +73,17 @@ export default function InventoryPage() {
         <Table>
           <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
             <TableRow>
-              <TableHead className="w-[100px]">SKU</TableHead>
-              <TableHead>Product Name</TableHead>
-              <TableHead>Branch</TableHead>
+              <TableHead className="w-[100px]">รหัส (SKU)</TableHead>
+              <TableHead>ชื่อสินค้า</TableHead>
+              <TableHead>สาขา</TableHead>
               <TableHead>
                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary">
-                  Current Stock <ArrowUpDown className="h-3 w-3" />
+                  คงเหลือ <ArrowUpDown className="h-3 w-3" />
                 </div>
               </TableHead>
-              <TableHead>Reorder Point</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>จุดสั่งซื้อ (Reorder)</TableHead>
+              <TableHead>สถานะ</TableHead>
+              <TableHead className="text-right">จัดการ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -94,9 +96,9 @@ export default function InventoryPage() {
                 <TableCell className="text-muted-foreground text-xs">{item.reorderPoint}</TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                    item.status === 'Good' 
+                    item.status === 'ปกติ' 
                       ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20' 
-                      : item.status === 'Low Stock'
+                      : item.status === 'สินค้าใกล้หมด'
                       ? 'bg-yellow-50 text-yellow-800 ring-yellow-600/20 dark:bg-yellow-500/10 dark:text-yellow-400 dark:ring-yellow-500/20'
                       : 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-900/10 dark:text-red-400 dark:ring-red-500/20'
                   }`}>
@@ -105,7 +107,7 @@ export default function InventoryPage() {
                 </TableCell>
                 <TableCell className="text-right">
                    <Button variant="ghost" size="sm" className="h-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
-                     Adjust
+                     ปรับยอด
                    </Button>
                 </TableCell>
               </TableRow>

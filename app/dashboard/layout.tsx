@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { 
   LayoutDashboard, 
@@ -9,9 +11,22 @@ import {
   LogOut,
   Package2,
   Menu,
-  Bell
+  Bell,
+  Box,
+  Globe
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ModeToggle } from "@/components/mode-toggle"
+import { SidebarItem } from "@/components/dashboard/sidebar-item"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
+// Simple mock user for display
+const user = {
+  name: "แอดมิน (Admin)",
+  role: "ผู้ดูแลระบบ",
+  branch: "สำนักงานใหญ่",
+  email: "admin@sp-system.com"
+}
 
 export default function DashboardLayout({
   children,
@@ -35,74 +50,32 @@ export default function DashboardLayout({
           <nav className="grid items-start px-4 text-sm font-medium space-y-1">
             <div className="pb-4">
               <h3 className="mb-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Overview
+                ภาพรวม (Overview)
               </h3>
               <div className="space-y-1">
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-3 rounded-lg bg-primary/10 px-3 py-2 text-primary transition-all hover:text-primary"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="/dashboard/reports"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
-                >
-                  <BarChart3 className="h-4 w-4" />
-                  Analytics
-                </Link>
+                <SidebarItem href="/dashboard" icon={LayoutDashboard} title="แดชบอร์ด" />
+                <SidebarItem href="/dashboard/reports" icon={BarChart3} title="รายงาน & สถิติ" />
               </div>
             </div>
             
             <div className="pb-4">
               <h3 className="mb-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Management
+                การจัดการ (Management)
               </h3>
               <div className="space-y-1">
-                <Link
-                  href="/dashboard/products"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
-                >
-                  <Package className="h-4 w-4" />
-                  Products
-                </Link>
-                <Link
-                  href="/dashboard/inventory"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
-                >
-                  <Users className="h-4 w-4" /> {/* Should be Box or something, using Users as placeholder */}
-                  Inventory
-                </Link>
-                <Link
-                  href="/dashboard/sales"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Sales (POS)
-                </Link>
+                <SidebarItem href="/dashboard/products" icon={Package} title="จัดการสินค้า" />
+                <SidebarItem href="/dashboard/inventory" icon={Box} title="จัดการสต๊อก" />
+                <SidebarItem href="/dashboard/sales" icon={ShoppingCart} title="ขายหน้าร้าน (POS)" />
               </div>
             </div>
 
             <div className="pb-4">
               <h3 className="mb-2 px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                System
+                ระบบ (System)
               </h3>
               <div className="space-y-1">
-                <Link
-                  href="/dashboard/users"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
-                >
-                  <Users className="h-4 w-4" />
-                  Staff
-                </Link>
-                <Link
-                  href="/dashboard/settings"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-slate-100 hover:text-primary dark:hover:bg-slate-800"
-                >
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Link>
+                <SidebarItem href="/dashboard/users" icon={Users} title="พนักงาน" />
+                <SidebarItem href="/dashboard/settings" icon={Settings} title="ตั้งค่า" />
               </div>
             </div>
           </nav>
@@ -110,14 +83,14 @@ export default function DashboardLayout({
 
         <div className="border-t p-4">
            <div className="flex items-center gap-3 rounded-lg bg-slate-100 p-3 dark:bg-slate-800">
-             <div className="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold dark:bg-indigo-900 dark:text-indigo-100">
-               AD
-             </div>
+             <Avatar className="h-9 w-9">
+                <AvatarFallback className="bg-primary/20 text-primary">AD</AvatarFallback>
+             </Avatar>
              <div className="flex-1 overflow-hidden">
-               <p className="truncate text-sm font-medium">Admin User</p>
-               <p className="truncate text-xs text-muted-foreground">Admin Branch A</p>
+               <p className="truncate text-sm font-medium">{user.name}</p>
+               <p className="truncate text-xs text-muted-foreground">{user.branch}</p>
              </div>
-             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-red-500">
                 <LogOut className="h-4 w-4" />
              </Button>
            </div>
@@ -132,11 +105,16 @@ export default function DashboardLayout({
             <Button variant="outline" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
-            <h1 className="text-lg font-semibold md:text-xl">
-              Dashboard
+            <h1 className="text-lg font-semibold md:text-xl hidden md:block">
+              ยินดีต้อนรับ, {user.name}
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+             <Button variant="ghost" size="sm" className="hidden md:flex gap-2">
+                 <Globe className="h-4 w-4" />
+                 <span>ไทย</span>
+             </Button>
+             <ModeToggle />
              <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-primary">
                  <Bell className="h-5 w-5" />
                  <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900"></span>

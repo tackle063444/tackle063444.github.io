@@ -1,106 +1,101 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
-import { 
-  User, 
-  MapPin, 
-  Bell, 
-  Shield, 
-  Database,
-  Globe
-} from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 pb-10">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
+        <h2 className="text-2xl font-bold tracking-tight">การตั้งค่า (Settings)</h2>
         <p className="text-muted-foreground">
-          Manage system preferences and configurations.
+          จัดการโปรไฟล์ และการตั้งค่าระบบ
         </p>
       </div>
-
-      <div className="grid gap-6 md:grid-cols-[220px_1fr]">
-        <nav className="flex flex-col space-y-1">
-          <Button variant="ghost" className="justify-start bg-slate-100 dark:bg-slate-800 font-semibold">
-             <User className="mr-2 h-4 w-4" /> Profile
-          </Button>
-          <Button variant="ghost" className="justify-start">
-             <MapPin className="mr-2 h-4 w-4" /> Branches
-          </Button>
-          <Button variant="ghost" className="justify-start">
-             <Shield className="mr-2 h-4 w-4" /> Roles & Permissions
-          </Button>
-          <Button variant="ghost" className="justify-start">
-             <Bell className="mr-2 h-4 w-4" /> Notifications
-          </Button>
-          <Button variant="ghost" className="justify-start">
-             <Database className="mr-2 h-4 w-4" /> Backup & Data
-          </Button>
-        </nav>
-
-        <div className="grid gap-6">
-           {/* Profile Settings */}
-           <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm">
-             <CardHeader>
-               <CardTitle>Profile Information</CardTitle>
-               <CardDescription>Update your account's profile information and email address.</CardDescription>
-             </CardHeader>
-             <CardContent className="space-y-4">
+      <Separator className="my-6" />
+      
+      <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
+        <aside className="-mx-4 lg:w-1/5">
+          <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1 overflow-x-auto pb-4 lg:pb-0 px-4">
+             {['โปรไฟล์', 'สาขา', 'สิทธิ์การใช้งาน', 'การแจ้งเตือน', 'สำรองข้อมูล'].map((item, i) => (
+                <Button 
+                  key={i} 
+                  variant={i === 0 ? "secondary" : "ghost"} 
+                  className="justify-start whitespace-nowrap"
+                >
+                  {item}
+                </Button>
+             ))}
+          </nav>
+        </aside>
+        
+        <div className="flex-1 lg:max-w-2xl">
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium">โปรไฟล์ (Profile)</h3>
+              <p className="text-sm text-muted-foreground">
+                ข้อมูลส่วนตัวและการแสดงผลของคุณ
+              </p>
+            </div>
+            <Separator />
+            
+            <div className="space-y-4">
                <div className="grid gap-2">
-                 <Label htmlFor="name">Name</Label>
-                 <Input id="name" defaultValue="Administrator" />
+                 <Label htmlFor="name">ชื่อที่แสดง</Label>
+                 <Input id="name" defaultValue="แอดมิน (Admin)" />
+                 <p className="text-[0.8rem] text-muted-foreground">
+                   นี่คือชื่อที่จะแสดงในหน้า Dashboard และบิลขาย
+                 </p>
                </div>
-               <div className="grid gap-2">
-                 <Label htmlFor="email">Email</Label>
-                 <Input id="email" defaultValue="admin@sp-system.com" />
-               </div>
-               <div className="grid gap-2">
-                  <Label>Language</Label>
-                  <div className="flex gap-2">
-                     <Button variant="outline" size="sm" className="border-primary text-primary bg-primary/5">English</Button>
-                     <Button variant="outline" size="sm">Thai</Button>
-                  </div>
-               </div>
-             </CardContent>
-             <div className="flex items-center p-6 pt-0">
-               <Button>Save Changes</Button>
-             </div>
-           </Card>
 
-           {/* System Preferences */}
-             <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm">
-             <CardHeader>
-               <CardTitle>System Preferences</CardTitle>
-               <CardDescription>Customize global system behavior.</CardDescription>
-             </CardHeader>
-             <CardContent className="space-y-4">
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">Dark Mode</Label>
-                    <p className="text-sm text-muted-foreground">Enable dark theme for the dashboard.</p>
+               <div className="grid gap-2">
+                 <Label htmlFor="email">อีเมล</Label>
+                 <Input id="email" type="email" defaultValue="admin@sp-system.com" disabled />
+               </div>
+
+               <div className="grid gap-2">
+                 <Label htmlFor="language">ภาษา</Label>
+                 <select 
+                    id="language" 
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                 >
+                    <option value="th">ไทย (Thai)</option>
+                    <option value="en">English (อังกฤษ)</option>
+                 </select>
+               </div>
+            </div>
+
+            <div className="mt-6">
+                <h3 className="text-lg font-medium mb-4">การตั้งค่าระบบ (Preferences)</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">รหัสสินค้าอัตโนมัติ (Auto-generate SKU)</Label>
+                      <p className="text-sm text-muted-foreground">
+                        สร้างรหัสสินค้าอัตโนมัติเมื่อเพิ่มสินค้าใหม่
+                      </p>
+                    </div>
+                    <Switch checked={true} />
                   </div>
-                  <Switch />
-                </div>
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">Auto-generate Product SKU</Label>
-                    <p className="text-sm text-muted-foreground">Automatically generate SKUs when creating new products.</p>
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">แจ้งเตือนสินค้าใกล้หมด (Low Stock Alerts)</Label>
+                      <p className="text-sm text-muted-foreground">
+                        ส่งอีเมลแจ้งเตือนเมื่อสินค้าต่ำกว่าจุดสั่งซื้อ
+                      </p>
+                    </div>
+                    <Switch checked={true} />
                   </div>
-                  <Switch defaultChecked />
                 </div>
-                 <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">Low Stock Alerts</Label>
-                    <p className="text-sm text-muted-foreground">Send email notifications when stock is low.</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-             </CardContent>
-           </Card>
+            </div>
+
+            <Button className="bg-indigo-600 hover:bg-indigo-700">บันทึกการเปลี่ยนแปลง</Button>
+          </div>
         </div>
       </div>
     </div>
