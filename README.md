@@ -1,5 +1,7 @@
 # SP System (ระบบจัดการสต๊อกและขายหน้าร้าน)
 
+![Build Status](https://github.com/tackle063444/tackle063444.github.io/actions/workflows/deploy.yml/badge.svg)
+
 ระบบบริหารจัดการสินค้าคงคลัง (Inventory Management) และระบบขายหน้าร้าน (POS) ที่ออกแบบมาเพื่อรองรับการทำงานหลายสาขา (Multi-branch) พร้อมระบบรายงานผลแบบ Real-time
 
 ![SP System Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop)
