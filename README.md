@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SP System (ระบบจัดการสต๊อกและขายหน้าร้าน)
 
-## Getting Started
+ระบบบริหารจัดการสินค้าคงคลัง (Inventory Management) และระบบขายหน้าร้าน (POS) ที่ออกแบบมาเพื่อรองรับการทำงานหลายสาขา (Multi-branch) พร้อมระบบรายงานผลแบบ Real-time
 
-First, run the development server:
+![SP System Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ ฟีเจอร์หลัก (Features)
+
+- **🖥️ Dashboard & Analytics**: ภาพรวมยอดขาย, กำไร, และสินค้าคงเหลือ แสดงผลด้วยกราฟที่สวยงาม เข้าใจง่าย
+- **📦 Product Management**: ระบบจัดการข้อมูลสินค้า, หมวดหมู่, ราคา, และรูปภาพ
+- **🏬 Inventory System**: ตรวจสอบและจัดการสต๊อกสินค้าแยกรายสาขา แจ้งเตือนเมื่อสินค้าใกล้หมด
+- **🛒 Point of Sale (POS)**: หน้าจอขายหน้าร้านที่ออกแบบมาให้ใช้งานง่าย รองรับการคำนวณภาษีและส่วนลด
+- **👥 User Management**: ระบบจัดการผู้ใช้งาน กำหนดสิทธิ์ (Role-based) เช่น Admin, Manager, Staff
+- **🌗 Dark Mode**: รองรับโหมดมืด/สว่าง เพื่อความสบายตาในการใช้งาน
+- **📱 Responsive Design**: รองรับการใช้งานผ่านมือถือและแท็บเล็ต
+
+## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
+
+- **Framework**: [Next.js 14+](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Charts**: [Recharts](https://recharts.org/)
+- **Forms**: React Hook Form + Zod
+- **Theme**: next-themes
+
+## 🚀 วิธีการเริ่มต้นใช้งาน (Getting Started)
+
+1. **Clone Project**
+
+   ```bash
+   git clone https://github.com/yourusername/sp-system.git
+   cd sp-system
+   ```
+
+2. **ติดตั้ง Dependencies**
+
+   ```bash
+   npm install
+   # หรือ
+   yarn install
+   ```
+
+3. **รันโปรเจกต์ (Development Mode)**
+   ```bash
+   npm run dev
+   ```
+   เปิด Browser ไปที่ `http://localhost:3000`
+
+## 📂 โครงสร้างโปรเจกต์ (Project Structure)
+
+```
+sp-system/
+├── app/                  # Next.js App Router
+│   ├── (auth)/          # หน้า Login (Authentication)
+│   ├── (dashboard)/     # หน้าหลักระบบหลังบ้าน
+│   ├── api/             # API Routes
+│   └── layout.tsx       # Root Layout
+├── components/           # React Components
+│   ├── ui/              # Reusable UI Components (shadcn)
+│   └── dashboard/       # Dashboard specific components
+├── lib/                  # Utilities & Helper functions
+└── public/               # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📄 ลิขสิทธิ์ (License)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+โปรเจกต์นี้เผยแพร่ภายใต้ลิขสิทธิ์ [MIT License](LICENSE) สามารถนำไปใช้งาน ปรับปรุง และพัฒนาต่อได้ฟรี
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+จัดทำโดย [Antigravity]
