@@ -22,6 +22,7 @@ export type Branch = {
     code: string;
     name: string;
     location: string | null;
+    image: string | null;
     createdAt: Generated<Timestamp>;
     updatedAt: Timestamp;
 };
@@ -39,6 +40,7 @@ export type Product = {
     unit: Generated<string>;
     basePrice: string;
     costPrice: Generated<string>;
+    inventory: Generated<number>;
     categoryId: string;
     createdAt: Generated<Timestamp>;
     updatedAt: Timestamp;

@@ -6,6 +6,8 @@ export interface Branch {
   id: string;
   name: string;
   code: string;
+  location?: string;
+  image?: string;
 }
 
 export interface Category {
@@ -23,6 +25,8 @@ export interface Product {
   basePrice: number;
   costPrice: number;
   status: string;
+  imageUrl?: string;
+  inventory?: number; // Central Stock
 }
 
 export interface Stock {
@@ -45,12 +49,21 @@ interface DataContextType {
   addCategory: (category: { name: string, code: string }) => Promise<void>;
   updateCategory: (id: string, category: Partial<Category>) => Promise<void>;
   deleteCategory: (id: string) => Promise<void>;
+  getCategoryById: (id: string) => Promise<Category | null>;
   
   addProduct: (product: any) => Promise<void>;
   updateProduct: (id: string, product: Partial<Product>) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
+  getProductById: (id: string) => Promise<Product | null>;
   
+  addBranch: (branch: { name: string, code: string, location?: string, image?: string }) => Promise<void>;
+  updateBranch: (id: string, branch: Partial<Branch>) => Promise<void>;
+  deleteBranch: (id: string) => Promise<void>;
+  getBranchById: (id: string) => Promise<any | null>; // Returns branch + stocks
+
   updateStock: (branchId: string, productId: string, quantity: number) => Promise<void>;
+  adjustStock: (branchId: string, productId: string, adjustment: number) => Promise<void>;
+  addStockToBranch: (branchId: string, productId: string, quantity: number) => Promise<void>;
   transferStock: (fromBranchId: string, toBranchId: string, productId: string, quantity: number) => Promise<void>;
   
   getStocksByBranch: (branchId: string) => Stock[];
@@ -95,6 +108,60 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     refresh();
   }, []);
 
+  const addBranch = async (data: { name: string, code: string, location?: string, image?: string }) => {
+    try {
+        await fetch('/api/branches', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        refresh();
+    } catch (e) {
+        console.error(e);
+    }
+  };
+
+  const updateBranch = async (id: string, data: Partial<Branch>) => {
+      try {
+          const res = await fetch(`/api/branches/${id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+          });
+          if (!res.ok) throw new Error('Failed to update branch');
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
+      }
+  };
+
+  const deleteBranch = async (id: string) => {
+      try {
+          const res = await fetch(`/api/branches/${id}`, {
+              method: 'DELETE',
+          });
+          if (!res.ok) {
+              const error = await res.json();
+              throw new Error(error.error || 'Failed to delete branch');
+          }
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
+      }
+  };
+
+  const getBranchById = async (id: string): Promise<any | null> => {
+      try {
+          const res = await fetch(`/api/branches/${id}`);
+          if (!res.ok) return null;
+          return await res.json();
+      } catch (e) {
+          console.error(e);
+          return null;
+      }
+  };
+
   const addCategory = async (data: { name: string, code: string }) => {
     try {
         await fetch('/api/categories', {
@@ -108,11 +175,45 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateCategory = async (id: string, data: Partial<Category>) => {
-      console.warn("Update Category API not implemented yet");
+      try {
+          const res = await fetch(`/api/categories/${id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+          });
+          if (!res.ok) throw new Error('Failed to update category');
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
+      }
   };
   
   const deleteCategory = async (id: string) => {
-      console.warn("Delete Category API not implemented yet");
+      try {
+          const res = await fetch(`/api/categories/${id}`, {
+              method: 'DELETE',
+          });
+          if (!res.ok) {
+              const error = await res.json();
+              throw new Error(error.error || 'Failed to delete category');
+          }
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
+      }
+  };
+
+  const getCategoryById = async (id: string): Promise<Category | null> => {
+      try {
+          const res = await fetch(`/api/categories/${id}`);
+          if (!res.ok) return null;
+          return await res.json();
+      } catch (e) {
+          console.error(e);
+          return null;
+      }
   };
 
   const addProduct = async (data: any) => {
@@ -128,12 +229,43 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateProduct = async (id: string, data: Partial<Product>) => {
-     console.warn("Update Product API not implemented yet");
+      try {
+          const res = await fetch(`/api/products/${id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+          });
+          if (!res.ok) throw new Error('Failed to update product');
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
+      }
   }
   
   const deleteProduct = async (id: string) => {
-      console.warn("Delete Product API not implemented yet");
+      try {
+          const res = await fetch(`/api/products/${id}`, {
+              method: 'DELETE',
+          });
+          if (!res.ok) throw new Error('Failed to delete product');
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
+      }
   }
+
+  const getProductById = async (id: string): Promise<Product | null> => {
+      try {
+          const res = await fetch(`/api/products/${id}`);
+          if (!res.ok) return null;
+          return await res.json();
+      } catch (e) {
+          console.error(e);
+          return null;
+      }
+  };
 
   const updateStock = async (branchId: string, productId: string, quantity: number) => {
       try {
@@ -149,6 +281,42 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           refresh();
       } catch (e) {
           console.error(e);
+      }
+  };
+
+  const adjustStock = async (branchId: string, productId: string, adjustment: number) => {
+      try {
+          const res = await fetch(`/api/branches/${branchId}/stocks`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ productId, adjustment })
+          });
+          if (!res.ok) {
+              const error = await res.json();
+              throw new Error(error.error || 'Failed to adjust stock');
+          }
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
+      }
+  };
+
+  const addStockToBranch = async (branchId: string, productId: string, quantity: number) => {
+      try {
+          const res = await fetch(`/api/branches/${branchId}/stocks`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ productId, quantity })
+          });
+          if (!res.ok) {
+              const error = await res.json();
+              throw new Error(error.error || 'Failed to add stock');
+          }
+          refresh();
+      } catch (e) {
+          console.error(e);
+          throw e;
       }
   };
 
@@ -176,9 +344,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   return (
     <DataContext.Provider value={{
       branches, categories, products, stocks, isLoading, refresh,
-      addCategory, updateCategory, deleteCategory,
-      addProduct, updateProduct, deleteProduct,
-      updateStock, transferStock,
+      addBranch, updateBranch, deleteBranch, getBranchById,
+      addCategory, updateCategory, deleteCategory, getCategoryById,
+      addProduct, updateProduct, deleteProduct, getProductById,
+      updateStock, adjustStock, addStockToBranch, transferStock,
       getStocksByBranch, getProductStock
     }}>
       {children}

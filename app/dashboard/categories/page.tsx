@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useData } from "@/data/data-context"
 import { useLanguage } from "@/data/language-context"
 import { Button } from "@/components/ui/button"
@@ -8,54 +9,36 @@ import { Input } from "@/components/ui/input"
 import { 
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
 } from "@/components/ui/table"
-import { 
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger 
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
 import { Plus, Pencil, Trash2, Search } from "lucide-react"
+import { DeleteConfirmationDialog } from "@/components/dashboard/delete-confirmation-dialog"
 
 export default function CategoriesPage() {
-  const { categories, addCategory, updateCategory, deleteCategory } = useData();
+  const router = useRouter()
+  const { categories, deleteCategory } = useData();
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [currentId, setCurrentId] = useState<string | null>(null);
-  
-  // Form State
-  const [formData, setFormData] = useState({ name: "", code: "" });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const filteredCategories = categories.filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     c.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleOpenAdd = () => {
-    setIsEditMode(false);
-    setFormData({ name: "", code: "" });
-    setIsDialogOpen(true);
+  const handleDeleteClick = (id: string, name: string) => {
+    setCategoryToDelete({ id, name });
+    setDeleteDialogOpen(true);
   };
 
-  const handleOpenEdit = (category: any) => {
-    setIsEditMode(true);
-    setCurrentId(category.id);
-    setFormData({ name: category.name, code: category.code });
-    setIsDialogOpen(true);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isEditMode && currentId) {
-      updateCategory(currentId, formData);
-    } else {
-      addCategory(formData);
-    }
-    setIsDialogOpen(false);
-  };
-
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this category?")) {
-      deleteCategory(id);
+  const handleDeleteConfirm = async () => {
+    if (categoryToDelete) {
+      try {
+        await deleteCategory(categoryToDelete.id);
+      } catch (error: any) {
+        console.error('Failed to delete category:', error);
+        alert(error.message || 'เกิดข้อผิดพลาดในการลบหมวดหมู่');
+      }
+      setCategoryToDelete(null);
     }
   };
 
@@ -68,7 +51,10 @@ export default function CategoriesPage() {
             จัดการหมวดหมู่สินค้าในระบบ
           </p>
         </div>
-        <Button onClick={handleOpenAdd} className="bg-primary hover:bg-primary/90">
+        <Button 
+          onClick={() => router.push('/dashboard/categories/add')} 
+          className="bg-primary hover:bg-primary/90"
+        >
           <Plus className="mr-2 h-4 w-4" />
           เพิ่มหมวดหมู่
         </Button>
@@ -103,10 +89,18 @@ export default function CategoriesPage() {
                   <TableCell>{category.name}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(category)}>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => router.push(`/dashboard/categories/${category.id}/edit`)}
+                      >
                         <Pencil className="h-4 w-4 text-muted-foreground hover:text-primary" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(category.id)}>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => handleDeleteClick(category.id, category.name)}
+                      >
                         <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
                       </Button>
                     </div>
@@ -124,50 +118,14 @@ export default function CategoriesPage() {
         </Table>
       </div>
 
-      {/* Dialog Form */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{isEditMode ? 'แก้ไขหมวดหมู่' : 'เพิ่มหมวดหมู่ใหม่'}</DialogTitle>
-            <DialogDescription>
-              กรอกข้อมูลหมวดหมู่สินค้าด้านล่าง
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="code" className="text-right">
-                  รหัส
-                </Label>
-                <Input
-                  id="code"
-                  value={formData.code}
-                  onChange={(e) => setFormData({...formData, code: e.target.value})}
-                  className="col-span-3"
-                  placeholder="เช่น ELEC"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  ชื่อ
-                </Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="col-span-3"
-                  placeholder="เช่น อุปกรณ์ไอที"
-                  required
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit">บันทึก</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="ยืนยันการลบหมวดหมู่"
+        description="คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่นี้? หากมีสินค้าใช้หมวดหมู่นี้อยู่ จะไม่สามารถลบได้"
+        itemName={categoryToDelete?.name}
+      />
     </div>
   )
 }

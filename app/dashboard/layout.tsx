@@ -18,7 +18,9 @@ import {
   Bell,
   Box,
   Languages,
-  Tags
+  Tags,
+  Building2,
+  ChevronDown
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -87,6 +89,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
               <div className="space-y-1">
                 <SidebarItem href="/dashboard/products" icon={Package} title={t.products} />
                 <SidebarItem href="/dashboard/categories" icon={Tags} title="หมวดหมู่สินค้า" />
+                <SidebarItem href="/dashboard/branches" icon={Building2} title="จัดการสาขา" />
                 <SidebarItem href="/dashboard/inventory" icon={Box} title={t.inventory} />
                 <SidebarItem href="/dashboard/sales" icon={ShoppingCart} title={t.pos} />
               </div>
@@ -106,25 +109,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
 
-        <div className="border-t border-transparent dark:border-border p-4 mt-auto">
-           <div className="flex items-center gap-3 rounded-lg bg-accent p-3 transition-colors">
-             <Avatar className="h-9 w-9">
-                <AvatarFallback className="bg-primary/20 text-primary">AD</AvatarFallback>
-             </Avatar>
-             <div className="flex-1 overflow-hidden">
-               <p className="truncate text-sm font-medium">{user?.name}</p>
-               <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-             </div>
-             <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground hover:text-red-500"
-                onClick={() => signOut()}
-             >
-                <LogOut className="h-4 w-4" />
-             </Button>
-           </div>
-        </div>
+        {/* Removed bottom profile */}
     </div>
   );
 
@@ -157,29 +142,70 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
               {t.welcome}, {user?.name}
             </h1>
           </div>
-          <div className="flex items-center gap-2">
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="hidden md:flex gap-2">
-                      <Languages className="h-4 w-4" />
-                      <span>{lang === 'th' ? 'ไทย' : 'English'}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setLang('th')}>
-                    🇹🇭 ภาษาไทย (Thai)
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setLang('en')}>
-                    🇬🇧 English
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-             </DropdownMenu>
+          <div className="flex items-center gap-4">
+             <div className="flex items-center gap-2 border-r border-border pr-4 h-8">
+                <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <Button variant="ghost" size="sm" className="hidden md:flex gap-2 h-8">
+                         <Languages className="h-4 w-4" />
+                         <span>{lang === 'th' ? 'TH' : 'EN'}</span>
+                     </Button>
+                   </DropdownMenuTrigger>
+                   <DropdownMenuContent align="end">
+                     <DropdownMenuItem onClick={() => setLang('th')}>
+                       🇹🇭 ภาษาไทย (TH)
+                     </DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => setLang('en')}>
+                       🇬🇧 English (EN)
+                     </DropdownMenuItem>
+                   </DropdownMenuContent>
+                </DropdownMenu>
+                <ModeToggle />
+             </div>
 
-             <ModeToggle />
              <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-primary">
                  <Bell className="h-5 w-5" />
                  <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900 animate-pulse"></span>
              </Button>
+
+             <div className="h-8 w-px bg-border mx-1" />
+
+             {/* Moved Profile to Header */}
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 flex items-center gap-3 rounded-full hover:bg-accent/50 pr-2 pl-1">
+                    <Avatar className="h-8 w-8 border border-border shadow-sm">
+                      <AvatarImage src={`https://avatar.vercel.sh/${user?.email}`} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {user?.name?.substring(0, 2).toUpperCase() || 'US'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start text-xs hidden sm:flex">
+                      <span className="font-semibold leading-none">{user?.name}</span>
+                      <span className="text-muted-foreground mt-0.5">{user?.role}</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                   <div className="flex items-center justify-start gap-2 p-2">
+                     <div className="flex flex-col space-y-1">
+                       <p className="text-sm font-medium leading-none">{user?.name}</p>
+                       <p className="text-xs leading-none text-muted-foreground">
+                         {user?.email}
+                       </p>
+                     </div>
+                   </div>
+                   <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/dashboard/settings')}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      บัญชีผู้ใช้
+                   </DropdownMenuItem>
+                   <DropdownMenuItem className="cursor-pointer text-red-500 focus:text-red-500" onClick={() => signOut()}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      ออกจากระบบ
+                   </DropdownMenuItem>
+                </DropdownMenuContent>
+             </DropdownMenu>
           </div>
         </header>
         

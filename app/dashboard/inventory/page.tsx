@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useData } from "@/data/data-context"
 import { useLanguage } from "@/data/language-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { 
   Table, 
   TableBody, 
@@ -18,8 +18,7 @@ import {
   Search, 
   ArrowUpDown,
   History,
-  PackagePlus,
-  ArrowRightLeft
+  PackagePlus
 } from "lucide-react"
 import {
   Select,
@@ -28,29 +27,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 
 export default function InventoryPage() {
-  const { stocks, products, branches, updateStock, transferStock } = useData();
+  const router = useRouter()
+  const { stocks, products, branches } = useData();
   const { t } = useLanguage();
   
   const [selectedBranchId, setSelectedBranchId] = useState("BR-001"); // Default HQ
   const [searchTerm, setSearchTerm] = useState("");
-  
-  // Stock Adjustment State
-  const [isAdjustOpen, setIsAdjustOpen] = useState(false);
-  const [adjustmentType, setAdjustmentType] = useState<'adjust' | 'transfer'>('adjust');
-  const [adjProductId, setAdjProductId] = useState("");
-  const [adjQuantity, setAdjQuantity] = useState("");
-  const [targetBranchId, setTargetBranchId] = useState("");
 
   const filteredStocks = stocks.filter(s => 
     s.branchId === selectedBranchId &&
@@ -60,21 +44,8 @@ export default function InventoryPage() {
   const getProductName = (pid: string) => products.find(p => p.id === pid)?.name || "Unknown";
   const getProductSku = (pid: string) => products.find(p => p.id === pid)?.sku || "Unknown";
 
-  const handleAdjustSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const qty = parseInt(adjQuantity);
-    
-    if (adjustmentType === 'adjust') {
-      updateStock(selectedBranchId, adjProductId, qty);
-    } else {
-      // Transfer
-      if (!targetBranchId) return alert("Please select target branch");
-      transferStock(selectedBranchId, targetBranchId, adjProductId, qty);
-    }
-    
-    setIsAdjustOpen(false);
-    setAdjProductId("");
-    setAdjQuantity("");
+  const handleAdjustClick = (branchId: string, productId: string, currentQuantity: number) => {
+    router.push(`/dashboard/inventory/adjust?branchId=${branchId}&productId=${productId}&quantity=${currentQuantity}`)
   };
 
   return (
@@ -92,83 +63,13 @@ export default function InventoryPage() {
             Stock History
           </Button>
           
-          <Dialog open={isAdjustOpen} onOpenChange={setIsAdjustOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90">
-                <PackagePlus className="mr-2 h-4 w-4" />
-                {t.adjustStock}
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>จัดการสต๊อกสินค้า</DialogTitle>
-                <DialogDescription>
-                  ปรับปรุงยอดคงเหลือ หรือโอนย้ายสินค้าระหว่างสาขา
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleAdjustSubmit}>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label className="text-right">ประเภทรายการ</Label>
-                    <Select value={adjustmentType} onValueChange={(v:any) => setAdjustmentType(v)}>
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="adjust">ปรับยอด (Set Quantity)</SelectItem>
-                        <SelectItem value="transfer">โอนย้าย (Transfer)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label className="text-right">สินค้า</Label>
-                    <Select value={adjProductId} onValueChange={setAdjProductId}>
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="เลือกสินค้า" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {products.map(p => (
-                          <SelectItem key={p.id} value={p.id}>{p.name} ({p.sku})</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {adjustmentType === 'transfer' && (
-                    <div className="grid grid-cols-4 items-center gap-4">
-                       <Label className="text-right">ไปยังสาขา</Label>
-                       <Select value={targetBranchId} onValueChange={setTargetBranchId}>
-                        <SelectTrigger className="col-span-3">
-                          <SelectValue placeholder="เลือกสาขาปลายทาง" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {branches.filter(b => b.id !== selectedBranchId).map(b => (
-                            <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label className="text-right">จำนวน</Label>
-                    <Input 
-                      type="number" 
-                      value={adjQuantity} 
-                      onChange={e => setAdjQuantity(e.target.value)}
-                      className="col-span-3"
-                      placeholder="ระบุจำนวน"
-                      required 
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">บันทึก</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            className="bg-primary hover:bg-primary/90"
+            onClick={() => router.push('/dashboard/inventory/adjust')}
+          >
+            <PackagePlus className="mr-2 h-4 w-4" />
+            {t.adjustStock}
+          </Button>
         </div>
       </div>
 
@@ -236,12 +137,12 @@ export default function InventoryPage() {
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => {
-                        setAdjustmentType('adjust');
-                        setAdjProductId(item.productId);
-                        setAdjQuantity(item.quantity.toString());
-                        setIsAdjustOpen(true);
-                      }} className="h-8 text-primary hover:text-primary hover:bg-primary/10">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleAdjustClick(item.branchId, item.productId, item.quantity)} 
+                        className="h-8 text-primary hover:text-primary hover:bg-primary/10"
+                      >
                         {t.adjustStock}
                       </Button>
                     </TableCell>

@@ -32,7 +32,7 @@ export async function GET() {
 export async function POST(req: Request) {
 	try {
 		const body = await req.json();
-		const { name, sku, categoryId, price, costPrice } = body;
+		const { name, sku, categoryId, price, costPrice, imageUrl } = body;
 
 		const newProduct = await db
 			.insertInto("Product")
@@ -43,6 +43,8 @@ export async function POST(req: Request) {
 				categoryId,
 				basePrice: price,
 				costPrice: costPrice || 0,
+				inventory: Number(body.inventory || 0),
+				imageUrl,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			})

@@ -175,6 +175,7 @@ async function main() {
 				categoryId: product.categoryId,
 				basePrice: product.price,
 				costPrice: product.costPrice,
+				inventory: 1000, // Initial central stock
 			},
 		});
 	}

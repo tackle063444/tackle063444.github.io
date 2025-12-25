@@ -46,6 +46,7 @@ model Branch {
   code         String        @unique
   name         String
   location     String?
+  image        String?
   users        User[]
   stocks       Stock[]
   transactions Transaction[] // Transactions originating from this branch
@@ -69,6 +70,7 @@ model Product {
   unit             String            @default("ชิ้น")
   basePrice        Decimal           @db.Decimal(10, 2)
   costPrice        Decimal           @db.Decimal(10, 2) @default(0)
+  inventory        Int               @default(0) // Central / Unallocated Stock
   categoryId       String
   category         Category          @relation(fields: [categoryId], references: [id])
   stocks           Stock[]
