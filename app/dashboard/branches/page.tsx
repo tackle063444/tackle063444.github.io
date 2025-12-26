@@ -259,12 +259,11 @@ export default function BranchesPage() {
       </Card>
 
       <DeleteConfirmationDialog 
-        isOpen={!!branchToDelete}
-        onClose={() => setBranchToDelete(null)}
+        open={!!branchToDelete}
+        onOpenChange={(open) => !open && setBranchToDelete(null)}
         onConfirm={handleDelete}
         title="ยืนยันการลบสาขา"
         description="คุณแน่ใจว่าต้องการลบสาขานี้? ข้อมูลสาขาจะหายไปจากระบบ (ลบได้เฉพาะสาขาที่ไม่มีสต๊อกสินค้าค้างอยู่)"
-        isLoading={isDeleting}
       />
     </div>
   )

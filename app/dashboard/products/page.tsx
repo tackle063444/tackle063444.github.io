@@ -185,12 +185,11 @@ export default function ProductsPage() {
       </Card>
 
       <DeleteConfirmationDialog 
-        isOpen={!!productToDelete}
-        onClose={() => setProductToDelete(null)}
+        open={!!productToDelete}
+        onOpenChange={(open) => !open && setProductToDelete(null)}
         onConfirm={handleDelete}
         title="ยืนยันการลบสินค้า"
         description="คุณแน่ใจว่าต้องการลบสินค้านี้? ข้อมูลการขายและสต๊อกที่เกี่ยวข้องอาจได้รับผลกระทบ"
-        isLoading={isDeleting}
       />
     </div>
   )
