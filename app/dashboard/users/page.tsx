@@ -1,5 +1,8 @@
 "use client"
 
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { 
@@ -17,6 +20,7 @@ import {
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useLanguage } from "@/data/language-context"
 
 // Mock users
 const users = [
@@ -27,43 +31,56 @@ const users = [
 ]
 
 export default function UsersPage() {
+  const { t } = useLanguage();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role !== "ADMIN") {
+      router.push("/dashboard");
+    }
+  }, [status, session, router]);
+
+  if (status === "loading") return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  if (session?.user?.role !== "ADMIN") return null;
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">จัดการผู้ใช้งาน (Users)</h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t.staff}</h2>
           <p className="text-muted-foreground">
-            จัดการสิทธิ์การเข้าใช้งาน ตำแหน่ง และพนักงานในระบบ
+            Manage access, roles, and system users.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button className="bg-indigo-600 hover:bg-indigo-700">
+          <Button className="bg-primary hover:bg-primary/90">
             <UserPlus className="mr-2 h-4 w-4" />
-            เพิ่มผู้ใช้งาน
+            Add User
           </Button>
         </div>
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm dark:bg-slate-900 border-slate-200/60 dark:border-slate-800">
+      <div className="flex items-center justify-between rounded-lg border bg-card/50 p-4 shadow-sm backdrop-blur-sm">
         <div className="relative w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="ค้นหาชื่อ หรือ อีเมล..." 
-            className="pl-8 bg-slate-50 border-slate-200 dark:bg-slate-950 dark:border-slate-800"
+            placeholder="Search name or email..." 
+            className="pl-8 bg-background/50 border-input"
           />
         </div>
       </div>
 
-      <div className="rounded-lg border shadow-sm bg-white dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 overflow-hidden">
+      <div className="rounded-lg border shadow-sm bg-card/50 backdrop-blur-sm overflow-hidden">
         <Table>
-          <TableHeader className="bg-slate-50 dark:bg-slate-900/50">
+          <TableHeader className="bg-accent/50">
             <TableRow>
-              <TableHead className="w-[80px]">รูปโปรไฟล์</TableHead>
-              <TableHead>ข้อมูลผู้ใช้</TableHead>
-              <TableHead>ตำแหน่ง</TableHead>
-              <TableHead>สาขาที่ดูแล</TableHead>
-              <TableHead>สถานะ</TableHead>
-              <TableHead className="text-right"></TableHead>
+              <TableHead className="w-[80px]">Avatar</TableHead>
+              <TableHead>User Information</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Branch</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -83,9 +100,9 @@ export default function UsersPage() {
                 </TableCell>
                 <TableCell>
                     <Badge variant="outline" className={`
-                        ${user.role === 'ADMIN' ? 'border-purple-200 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300' : 
-                          user.role === 'MANAGER' ? 'border-blue-200 bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300' :
-                          'border-slate-200 bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}
+                        ${user.role === 'ADMIN' ? 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-900/30 dark:text-purple-300' : 
+                          user.role === 'MANAGER' ? 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                          'border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300'}
                     `}>
                         {user.role}
                     </Badge>

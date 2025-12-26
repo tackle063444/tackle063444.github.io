@@ -37,15 +37,16 @@ datasource db {
 
 // Enums สำหรับกำหนดค่าคงที่
 enum Role {
-  ADMIN     // ผู้ดูแลระบบสูงสุด: เห็นทุกสาขา, จัดการทุกอย่างได้
-  MANAGER   // ผู้จัดการสาขา: ดูแลเฉพาะสาขาตัวเอง, ดูรายงานได้
-  STAFF     // พนักงานขาย: ขายสินค้า, ดูสต๊อกเบื้องต้น
+  ADMIN
+  MANAGER
+  STAFF
 }
 
 enum TransactionType {
-  SALE      // การขายสินค้า
-  RESTOCK   // การรับสินค้าเข้าสต๊อก
-  ADJUST    // การปรับปรุงสต๊อก (เช่น ของหาย, ชำรุด)
+  SALE
+  RESTOCK
+  ADJUST
+  TRANSFER
 }
 
 // ตารางผู้ใช้งาน
@@ -55,9 +56,9 @@ model User {
   password     String
   name         String
   role         Role          @default(STAFF)
-  branchId     String?       // ถ้าเป็น Admin อาจจะเป็น null หรือเลือกสาขาที่ดูแลได้
+  branchId     String?
   branch       Branch?       @relation(fields: [branchId], references: [id])
-  transactions Transaction[] // รายกาลที่ user คนนี้ทำ
+  transactions Transaction[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -65,12 +66,12 @@ model User {
 // ตารางสาขา
 model Branch {
   id           String        @id @default(uuid())
-  branchCode   String        @unique // รหัสสาขา เช่น BR001
-  name         String        // ชื่อสาขา
-  location     String?       // ที่อยู่/ตำแหน่ง
+  code         String        @unique // รหัสสาขา เช่น BR-001
+  name         String
+  location     String?
   users        User[]
   stocks       Stock[]
-  transactions Transaction[]
+  transactions Transaction[] // รายการที่เกิดขึ้นที่สาขานี้
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -78,7 +79,7 @@ model Branch {
 // ตารางหมวดหมู่สินค้า
 model Category {
   id        String    @id @default(uuid())
-  catCode   String    @unique // รหัสหมวดหมู่ เช่น CAT-001 (Auto-gen)
+  code      String    @unique // รหัสหมวดหมู่ เช่น CAT-001
   name      String
   products  Product[]
 }
@@ -86,13 +87,13 @@ model Category {
 // ตารางสินค้า (Master Data)
 model Product {
   id               String            @id @default(uuid())
-  sku              String            @unique // รหัสสินค้า เช่น PROD-0001 (Auto-gen)
+  sku              String            @unique // รหัสสินค้า เช่น PROD-0001
   name             String
   description      String?
   imageUrl         String?
-  unit             String            @default("ชิ้น") // หน่วยนับ เช่น ชิ้น, กล่อง
+  unit             String            @default("ชิ้น")
   basePrice        Decimal           @db.Decimal(10, 2)
-  costPrice        Decimal           @db.Decimal(10, 2) @default(0) // ต้นทุน (Optional)
+  costPrice        Decimal           @db.Decimal(10, 2) @default(0)
   categoryId       String
   category         Category          @relation(fields: [categoryId], references: [id])
   stocks           Stock[]
@@ -101,29 +102,30 @@ model Product {
   updatedAt        DateTime          @updatedAt
 }
 
-// ตารางสต๊อกสินค้า (แยกตามสาขา)
+// ตารางสต๊อกสินค้า
 model Stock {
-  id        String  @id @default(uuid())
-  branchId  String
-  productId String
-  quantity  Int     @default(0) // จำนวนคงเหลือ
-  branch    Branch  @relation(fields: [branchId], references: [id])
-  product   Product @relation(fields: [productId], references: [id])
+  id           String  @id @default(uuid())
+  branchId     String
+  productId    String
+  quantity     Int     @default(0)
+  reorderPoint Int     @default(10) // จุดสั่งซื้อเพิ่ม
+  branch       Branch  @relation(fields: [branchId], references: [id])
+  product      Product @relation(fields: [productId], references: [id])
 
-  @@unique([branchId, productId]) // ป้องกันข้อมูลซ้ำ (1 สาขา มี 1 record ต่อ 1 สินค้า)
+  @@unique([branchId, productId])
 }
 
 // ตารางรายการเคลื่อนไหว (Head)
 model Transaction {
   id          String            @id @default(uuid())
   type        TransactionType
-  branchId    String
+  branchId    String // สาขาที่ทำรายการ
   branch      Branch            @relation(fields: [branchId], references: [id])
   totalAmount Decimal           @db.Decimal(10, 2)
   items       TransactionItem[]
   createdById String
   createdBy   User              @relation(fields: [createdById], references: [id])
-  note        String?           // หมายเหตุเพิ่มเติม
+  note        String?
   createdAt   DateTime          @default(now())
 }
 
@@ -134,9 +136,9 @@ model TransactionItem {
   transaction   Transaction @relation(fields: [transactionId], references: [id])
   productId     String
   product       Product     @relation(fields: [productId], references: [id])
-  quantity      Int         // จำนวนที่ขาย/รับเข้า
-  unitPrice     Decimal     @db.Decimal(10, 2) // ราคาต่อหน่วย ณ ตอนนั้น
-  subtotal      Decimal     @db.Decimal(10, 2) // ราคารวม (quantity * unitPrice)
+  quantity      Int
+  unitPrice     Decimal     @db.Decimal(10, 2)
+  subtotal      Decimal     @db.Decimal(10, 2)
 }
 ```
 
@@ -203,15 +205,23 @@ src/
    - _MANAGER_: เห็นเฉพาะ Dashboard และ Report สาขาตัวเอง
    - _STAFF_: เห็นแค่ ขายสินค้า (Sales), ดูสต๊อก (Inventory)
 
-### Phase 3: Master Data Management
+### Phase 3: Master Data Management (Current Status: ✅ Database Integrated)
 
-1. **Branch & Category**: สร้างหน้าเพิ่ม/ลบ สาขาและหมวดหมู่
+1. **Category Management**:
+   - ✅ หน้าเพิ่ม/ลบ หมวดหมู่ (เชื่อมต่อ Mock Data)
 2. **Product Management**:
-   - หน้า List รายการสินค้า
-   - หน้า Create/Edit Product พร้อม upload รูปภาพ
-   - **Logic สำคัญ**: ระบบ **Auto-generate SKU**
-     - Format: `CAT-001`, `PROD-0001`
-     - Logic: Query `findFirst` order by `id` (หรือ sequence field) แล้วตัด string มา +1
+   - ✅ หน้า List รายการสินค้า (Dynamic Table)
+   - ✅ Create/Edit Product (Form Validation)
+   - ✅ **Mock SKU Generation**: Auto-assign `SKU-TIMESTAMP` for now.
+
+### Phase 4: Inventory & Branch Logic (Current Status: ✅ Database Integrated)
+
+1. **Stock View**:
+   - ✅ Filter by Branch (Dropdown)
+   - ✅ View Stock per Product/Branch
+2. **Stock Adjustment**:
+   - ✅ Adjust Quantity (Set Stock)
+   - ✅ Transfer Stock (HQ -> Branch) logic in DataContext
 
 ### Phase 4: Inventory & Sales (Core Features)
 
