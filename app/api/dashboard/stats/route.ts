@@ -39,16 +39,19 @@ export async function GET(req: Request) {
 		}
 		const totalStock = await stockQuery.executeTakeFirst();
 
-		// 4. Low Stock Items
-		let lowStockQuery = db
+		// 4. Low Stock Items (Fetched and filtered in JS to avoid build type errors with raw SQL)
+		let allStocksQuery = db
 			.selectFrom("Stock")
-			.select(({ fn }) => fn.count<string>("id").as("count"))
-			.where(sql`quantity < "reorderPoint"`);
+			.select(["quantity", "reorderPoint"]);
 
 		if (branchId) {
-			lowStockQuery = lowStockQuery.where("branchId", "=", branchId);
+			allStocksQuery = allStocksQuery.where("branchId", "=", branchId);
 		}
-		const lowStock = await lowStockQuery.executeTakeFirst();
+
+		const allStocks = await allStocksQuery.execute();
+		const lowStockCount = allStocks.filter(
+			(s) => s.quantity < s.reorderPoint
+		).length;
 
 		// 5. Recent Sales
 		let recentSalesQuery = db
@@ -79,7 +82,7 @@ export async function GET(req: Request) {
 			totalRevenue: Number(revenue?.sum || 0),
 			salesCount: Number(salesCount?.count || 0),
 			totalStock: Number(totalStock?.sum || 0),
-			lowStockCount: Number(lowStock?.count || 0),
+			lowStockCount: lowStockCount,
 			recentSales: recentSales.map((s) => ({
 				...s,
 				totalAmount: Number(s.totalAmount),
