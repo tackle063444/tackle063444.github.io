@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 					id: uuidv4(),
 					type: "SALE",
 					branchId,
-					totalAmount: Number(totalAmount),
+					totalAmount: Number(totalAmount).toString(),
 					createdById: userId,
 					note,
 					createdAt: new Date(),
@@ -58,8 +58,8 @@ export async function POST(req: Request) {
 						transactionId: transaction.id,
 						productId,
 						quantity: Number(quantity),
-						unitPrice: Number(price),
-						subtotal: Number(price * quantity),
+						unitPrice: Number(price).toString(),
+						subtotal: Number(price * quantity).toString(),
 					})
 					.execute();
 
