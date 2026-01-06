@@ -41,7 +41,7 @@ import { DeleteConfirmationDialog } from "@/components/dashboard/delete-confirma
 import { toast } from "sonner"
 
 export default function ProductsPage() {
-  const { products, deleteProduct, isLoading } = useData()
+  const { products, categories, deleteProduct, isLoading } = useData()
   const [searchTerm, setSearchTerm] = useState("")
   const [isDeleting, setIsDeleting] = useState(false)
   const [productToDelete, setProductToDelete] = useState<string | null>(null)
@@ -142,7 +142,7 @@ export default function ProductsPage() {
                     </TableCell>
                     <TableCell className="px-6">
                       <Badge variant="secondary" className="font-normal">
-                        {product.category?.name || "ไม่ระบุ"}
+                        {categories.find(c => c.id === product.categoryId)?.name || "ไม่ระบุ"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right px-6 font-bold text-primary">
