@@ -219,7 +219,7 @@ export default function SalesPage() {
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 sm:p-8 scrollbar-hide pb-24 lg:pb-8">
-           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+           <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {filteredStocks.map((stock) => {
                 const inCartQty = cart.find(item => item.productId === stock.productId)?.quantity || 0
                 const remainingStock = stock.quantity - inCartQty
@@ -233,15 +233,15 @@ export default function SalesPage() {
                    toast.success("เพิ่มลงออเดอร์แล้ว")
                  }}
                 >
-                  <div className="aspect-square flex items-center justify-center text-4xl sm:text-5xl bg-muted/30 rounded-2xl relative overflow-hidden transition-all group-hover:bg-primary/5">
-                     {stock.productImage ? (
-                        <Image src={stock.productImage} alt={stock.productName} fill className="object-cover" unoptimized />
-                     ) : (
-                        <>
-                           <Package className="h-12 w-12 sm:h-16 sm:w-16 opacity-[0.03] absolute rotate-12" />
-                           📦
-                        </>
-                     )}
+                     <div className="aspect-square flex items-center justify-center text-3xl sm:text-4xl bg-muted/30 rounded-2xl relative overflow-hidden transition-all group-hover:bg-primary/5">
+                        {stock.productImage ? (
+                           <Image src={stock.productImage} alt={stock.productName} fill className="object-cover" unoptimized />
+                        ) : (
+                           <>
+                              <Package className="h-10 w-10 sm:h-14 sm:w-14 opacity-[0.03] absolute rotate-12" />
+                              📦
+                           </>
+                        )}
                      {remainingStock <= 10 && remainingStock > 0 && (
                        <div className="absolute top-2 left-2 right-2 flex justify-start">
                           <Badge className="bg-orange-500 hover:bg-orange-600 border-none font-black text-[9px] h-5 px-1.5 line-clamp-1">LOW</Badge>
@@ -257,7 +257,7 @@ export default function SalesPage() {
                     <h3 className="font-bold text-xs sm:text-sm leading-relaxed line-clamp-2 h-12 sm:h-14 w-full break-words" title={stock.productName}>{stock.productName}</h3>
                     <div className="flex flex-col gap-1">
                        <div className="flex items-center justify-between gap-1 sm:gap-2">
-                         <span className="font-black text-base sm:text-lg lg:text-xl text-primary tracking-tighter">฿{products.find(p => p.id === stock.productId)?.basePrice.toLocaleString()}</span>
+                         <span className="font-black text-sm sm:text-base lg:text-lg text-primary tracking-tighter">฿{products.find(p => p.id === stock.productId)?.basePrice.toLocaleString()}</span>
                          <Badge variant={remainingStock > 10 ? "secondary" : "destructive"} className="text-[9px] sm:text-[10px] font-bold h-5 px-1.5 shrink-0">
                            {remainingStock}
                          </Badge>
@@ -277,20 +277,20 @@ export default function SalesPage() {
       </div>
 
       {/* RIGHT: Transaction Cart */}
-      <div className={`flex w-full flex-col rounded-[2.5rem] border-2 border-primary/5 bg-card/60 shadow-2xl lg:w-[480px] backdrop-blur-3xl relative overflow-hidden ${mobileView === 'catalog' ? 'hidden lg:flex' : 'flex flex-1'}`}>
+      <div className={`flex w-full flex-col rounded-[2.5rem] border-2 border-primary/5 bg-card/60 shadow-2xl lg:w-[380px] backdrop-blur-3xl relative overflow-hidden ${mobileView === 'catalog' ? 'hidden lg:flex' : 'flex flex-1'}`}>
         {/* Cart Header */}
-        <div className="p-6 sm:p-8 sm:pb-6 border-b border-primary/5 bg-primary/[0.03]">
+        <div className="p-4 sm:p-6 sm:pb-4 border-b border-primary/5 bg-primary/[0.03]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
                  <ShoppingCart className="h-5 w-5 text-white" />
               </div>
-              <h2 className="font-black text-xl sm:text-2xl tracking-tighter uppercase">Bill Summary</h2>
+              <h2 className="font-black text-lg sm:text-xl tracking-tighter uppercase">Bill Summary</h2>
             </div>
             <Button 
               variant="outline" 
               size="sm" 
-              className="rounded-full h-10 px-4 border-2 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all font-bold text-xs"
+              className="rounded-full h-8 px-4 border-2 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all font-bold text-[10px]"
               onClick={() => setCart([])}
               disabled={cart.length === 0}
             >
@@ -300,7 +300,7 @@ export default function SalesPage() {
         </div>
 
         {/* Cart Items List */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 sm:space-y-8 scrollbar-hide pb-24 lg:pb-8">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 scrollbar-hide pb-24 lg:pb-8">
            {cart.length === 0 ? (
              <div className="h-full flex flex-col items-center justify-center gap-6 text-muted-foreground/30 py-10">
                 <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full border-4 border-dashed border-muted-foreground/20 flex items-center justify-center">
@@ -310,14 +310,14 @@ export default function SalesPage() {
              </div>
            ) : (
              cart.map((item) => (
-               <div key={item.productId} className="flex items-center gap-4 sm:gap-5 animate-in slide-in-from-right-8 duration-300">
-                  <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-3xl bg-muted/40 p-3 sm:p-4 border border-white/10 flex items-center justify-center text-3xl sm:text-4xl shadow-inner group shrink-0">
+               <div key={item.productId} className="flex items-center gap-3 sm:gap-4 animate-in slide-in-from-right-8 duration-300">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-muted/40 p-2 sm:p-2.5 border border-white/10 flex items-center justify-center text-xl sm:text-2xl shadow-inner group shrink-0">
                     📦
                   </div>
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <p className="font-black truncate text-sm sm:text-base tracking-tight leading-tight">{item.name}</p>
-                    <p className="font-black text-primary text-base sm:text-lg tracking-tighter">฿{item.price.toLocaleString()}</p>
-                    <Badge variant="outline" className="text-[9px] font-bold border-muted-foreground/20 uppercase tracking-tighter opacity-60">SKU: {item.sku}</Badge>
+                  <div className="flex-1 min-w-0 space-y-0.5">
+                    <p className="font-black truncate text-xs sm:text-sm tracking-tight leading-tight">{item.name}</p>
+                    <p className="font-black text-primary text-sm sm:text-base tracking-tighter">฿{item.price.toLocaleString()}</p>
+                    <Badge variant="outline" className="text-[8px] font-bold border-muted-foreground/20 uppercase tracking-tighter opacity-60">SKU: {item.sku}</Badge>
                   </div>
                   <div className="flex flex-col items-center gap-2">
                      <div className="flex items-center gap-2 sm:gap-3 bg-muted/50 p-1.5 rounded-2xl border border-white/5 shadow-inner">
@@ -346,7 +346,7 @@ export default function SalesPage() {
         </div>
 
         {/* Payment Summary */}
-        <div className="p-6 sm:p-8 bg-muted/30 border-t border-primary/10 rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.05)] space-y-6 sm:space-y-8 pb-24 lg:pb-8">
+        <div className="p-4 sm:p-6 bg-muted/30 border-t border-primary/10 rounded-t-[2.5rem] shadow-[0_-20px_50px_rgba(0,0,0,0.05)] space-y-4 sm:space-y-6 pb-24 lg:pb-8">
           <div className="space-y-3 sm:space-y-4 px-2">
             <div className="flex justify-between items-center text-sm font-bold opacity-60">
               <span className="uppercase tracking-[0.2em]">Subtotal</span>
@@ -358,57 +358,57 @@ export default function SalesPage() {
             </div>
             <Separator className="bg-primary/20 h-0.5" />
             <div className="flex justify-between items-end pt-2">
-              <span className="text-lg font-black uppercase tracking-tighter text-muted-foreground">Grand Total</span>
+              <span className="text-base font-black uppercase tracking-tighter text-muted-foreground">Grand Total</span>
               <div className="flex flex-col items-end">
-                 <span className="text-3xl sm:text-4xl font-black text-primary tracking-tighter leading-none">฿{finalTotal.toLocaleString()}</span>
+                 <span className="text-2xl sm:text-3xl font-black text-primary tracking-tighter leading-none">฿{finalTotal.toLocaleString()}</span>
                  <div className="h-1.5 w-full bg-primary/20 mt-1 rounded-full" />
               </div>
             </div>
           </div>
           
-           <div className="grid grid-cols-3 gap-3 sm:gap-4">
+           <div className="grid grid-cols-3 gap-2 sm:gap-3">
              <Button 
                variant="outline" 
-               className="flex flex-col h-20 sm:h-24 items-center justify-center gap-2 sm:gap-3 border-2 rounded-[1.5rem] hover:border-green-500 hover:bg-green-500/5 transition-all shadow-sm group active:scale-95"
+               className="flex flex-col h-14 sm:h-16 items-center justify-center gap-1.5 sm:gap-2 border-2 rounded-2xl hover:border-green-500 hover:bg-green-500/5 transition-all shadow-sm group active:scale-95"
                onClick={() => handleCheckout("CASH")}
                disabled={cart.length === 0 || isProcessing}
              >
-               <Banknote className="h-6 w-6 sm:h-7 sm:w-7 text-green-500 group-hover:scale-110 transition-transform" />
-               <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-green-600">Cash</span>
+               <Banknote className="h-5 w-5 sm:h-6 sm:w-6 text-green-500 group-hover:scale-110 transition-transform" />
+               <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-green-600">Cash</span>
              </Button>
              <Button 
                variant="outline" 
-               className="flex flex-col h-20 sm:h-24 items-center justify-center gap-2 sm:gap-3 border-2 rounded-[1.5rem] hover:border-blue-500 hover:bg-blue-500/5 transition-all shadow-sm group active:scale-95"
+               className="flex flex-col h-14 sm:h-16 items-center justify-center gap-1.5 sm:gap-2 border-2 rounded-2xl hover:border-blue-500 hover:bg-blue-500/5 transition-all shadow-sm group active:scale-95"
                onClick={() => handleCheckout("PROMPTPAY")}
                disabled={cart.length === 0 || isProcessing}
              >
-               <QrCode className="h-6 w-6 sm:h-7 sm:w-7 text-blue-500 group-hover:scale-110 transition-transform" />
-               <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-blue-600">Transfer</span>
+               <QrCode className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500 group-hover:scale-110 transition-transform" />
+               <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-blue-600">Transfer</span>
              </Button>
              <Button 
                variant="outline" 
-               className="flex flex-col h-20 sm:h-24 items-center justify-center gap-2 sm:gap-3 border-2 rounded-[1.5rem] hover:border-orange-500 hover:bg-orange-500/5 transition-all shadow-sm group active:scale-95"
+               className="flex flex-col h-14 sm:h-16 items-center justify-center gap-1.5 sm:gap-2 border-2 rounded-2xl hover:border-orange-500 hover:bg-orange-500/5 transition-all shadow-sm group active:scale-95"
                onClick={() => handleCheckout("CARD")}
                disabled={cart.length === 0 || isProcessing}
              >
-               <CreditCard className="h-6 w-6 sm:h-7 sm:w-7 text-orange-500 group-hover:scale-110 transition-transform" />
-               <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-orange-600">Card</span>
+               <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500 group-hover:scale-110 transition-transform" />
+               <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-orange-600">Card</span>
              </Button>
            </div>
 
           <Button 
-            className="w-full h-16 sm:h-20 text-xl sm:text-2xl font-black shadow-[0_15px_30px_rgba(0,0,0,0.15)] rounded-[1.8rem] bg-primary hover:bg-primary/90 transition-all active:scale-[0.98] uppercase tracking-tighter"
+            className="w-full h-12 sm:h-14 text-lg sm:text-xl font-black shadow-[0_15px_30px_rgba(0,0,0,0.15)] rounded-2xl bg-primary hover:bg-primary/90 transition-all active:scale-[0.98] uppercase tracking-tighter"
             disabled={cart.length === 0 || isProcessing}
             onClick={() => handleCheckout("MANUAL")}
           >
             {isProcessing ? (
               <div className="flex items-center gap-3">
-                 <div className="h-5 w-5 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                 <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                  <span>Processing...</span>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                 <ShoppingCart className="h-6 w-6" />
+              <div className="flex items-center gap-2">
+                 <ShoppingCart className="h-5 w-5" />
                  <span>Complete Transaction</span>
               </div>
             )}
